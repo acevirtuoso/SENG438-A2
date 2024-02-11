@@ -1,0 +1,27 @@
+<component name="libraryTable">
+  <library name="jMock1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/objenesis-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcommon-1.0.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/junit.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hamcrest-library-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/cglib-nodep-2.1_3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hamcrest-core-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/bsh-core-2.0b4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcommon-1.0.0-rc1-cvs.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jfreechart.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/servlet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gnujaxp.jar!/" />
+      <root url="file://$PROJECT_DIR$/lib/jMock" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/cglib-2.1_3-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hamcrest-library-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hamcrest-core-1.1.jar!/" />
+      <root url="file://$PROJECT_DIR$/lib/jMock" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/lib/jMock" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/jMock" recursive="false" type="SOURCES" />
+  </library>
+</component>
