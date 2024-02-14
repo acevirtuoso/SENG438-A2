@@ -1,4 +1,4 @@
-package src.org.jfree.data.test;
+package org.jfree.data.test;
 
 import static org.junit.Assert.*;
 import org.jfree.data.Range;
@@ -85,12 +85,13 @@ public class RangeTest {
     public void ContainShouldReturnFalse() {
         double value = -5;
         assertFalse("Value -5 should NOT be contained in range (-1,1)", exampleRange.contains(value)); // know when to
-        // assert true,
-        // false, equals,
-        // notEquals, etc.
-        // this
     }     // checked
 
+    @Test
+    public void ContainShouldReturnFalseForAboveUpper() {
+        double value = 5;
+        assertFalse("Value -5 should NOT be contained in range (-1,1)", exampleRange.contains(value)); // know when to
+    }     // checked
     // this test comes after the tests for lower bound and upper bound so that they
     // catch the errors first
     // testing function intersect
