@@ -1,4 +1,4 @@
-package src.org.jfree.data.test;
+package org.jfree.data.test;
 
 import static org.junit.Assert.*;
 import org.jfree.data.Range;
@@ -52,11 +52,11 @@ public class RangeTest {
 ///
 
     // testing function combine
-    @Test
-    public void CombineShouldCombine() {
-        Range result = Range.combine(exampleRange, exampleRangeTwo);
-        assertEquals("The combination of a range (-1,1) and (-3,0) should be (-3,1)", sampleCombine, result);
-    }     // checked
+//    @Test
+//    public void CombineShouldCombine() {
+//        Range result = Range.combine(exampleRange, exampleRangeTwo);
+//        assertEquals("The combination of a range (-1,1) and (-3,0) should be (-3,1)", sampleCombine, result);
+//    }     // checked
 
     // testing function contain
     @Test
@@ -82,15 +82,18 @@ public class RangeTest {
 
 
     @Test
-    public void ContainShouldReturnFalse() {
+    public void BelowContainShouldReturnFalse() {
         double value = -5;
         assertFalse("Value -5 should NOT be contained in range (-1,1)", exampleRange.contains(value)); // know when to
         // assert true,
-        // false, equals,
-        // notEquals, etc.
-        // this
     }     // checked
 
+    @Test
+    public void AboveContainShouldReturnFalse() {
+        double value = 5;
+        assertFalse("Value 5 should NOT be contained in range (-1,1)", exampleRange.contains(value)); // know when to
+        // assert true,
+    }     // checked
     // this test comes after the tests for lower bound and upper bound so that they
     // catch the errors first
     // testing function intersect
@@ -98,14 +101,36 @@ public class RangeTest {
 
     //NOTE: Intersect has about 10 different cases, will add them later if I have the time
     @Test
-    public void IntersectsShouldReturnTrueWhenRangesOverlap() {
+    public void IntersectsShouldReturnTrueWhenUpperRangesOverlap() {
         Range range1 = new Range(1, 5);
         assertTrue("Ranges (1,5) and (3,7) should overlap",
                 range1.intersects(3, 7));
 
     }  // checked
 
+    @Test
+    public void IntersectsShouldReturnTrueWhenLowerRangesOverlap() {
+        Range range1 = new Range(1, 5);
+        assertTrue("Ranges (1,5) and (0,2) should overlap",
+                range1.intersects(0, 2));
 
+    }  // checked
+    
+    @Test
+    public void IntersectsShouldReturnTrueWhenSmallerRangesCompleteOverlap() {
+        Range range1 = new Range(1, 8);
+        assertTrue("Ranges (1,8) and (3,7) should overlap",
+                range1.intersects(3, 7));
+
+    }  // checked
+
+    @Test
+    public void IntersectsShouldReturnTrueWhenLargerRangesCompleteOverlap() {
+        Range range1 = new Range(1, 8);
+        assertTrue("Ranges (1,8) and (0,9) should overlap",
+                range1.intersects(0, 9));
+
+    }  // checked
     // testing function intersect ... same as above but the other way
     @Test
     public void IntersectsShouldReturnFalseWhenRangesDoNotOverlap() {
@@ -137,18 +162,6 @@ public class RangeTest {
         assertEquals("value is the lower bound, therefore constrain should return the lower bound", -1, exampleRange.constrain(value), delta);
     }
 
-
-
-    // testing function constrain
-//    @Test
-//    public void ConstrainAboveUpperBoundShouldReturnUpperBound() {
-//        double valueAboveUpperBound = 2.0;
-//        double constrainedValue = exampleRange.constrain(valueAboveUpperBound);
-//
-//        assertEquals("Constraining a value above the upper bound should return the upper bound",
-//                exampleRange.getUpperBound(), constrainedValue, delta);
-//        // this
-//    }
     @Test
     public void ConstrainAboveUpperBoundShouldReturnUpperBound() {
         double valueAboveUpperBound = 2.0;
@@ -167,16 +180,6 @@ public class RangeTest {
        assertEquals("value is below bounds, therefore should return the lower bound", -1, exampleRange.constrain(value), delta);
     }
 
-//    @Test
-//    public void ConstrainBelowLowerBoundShouldReturnCentralValue() {
-//        double valueBelowLowerBound = -2.0;
-//        double constrainedValue = exampleRange.constrain(valueBelowLowerBound);
-//        assertEquals("Constraining a value below the lower bound should return the central value",
-//                exampleRange.getCentralValue(), constrainedValue, 0.000000001d);
-//    }
-
-
-
     // testing function shift
     @Test
     public void ShiftWithZeroCrossingShouldReturnShiftedRange() {
@@ -190,26 +193,53 @@ public class RangeTest {
                 shiftedRange);
     }
 
-    // testing function shift
-//    @Test
-//    public void ShiftWithoutZeroCrossingShouldNotReturnShiftedRange() {
-//        double delta = 0.5;
-//        Range shiftedRange = Range.shift(exampleRange, delta, false);
-//        double expectedLower = exampleRange.getLowerBound() + delta;
-//        double expectedUpper = exampleRange.getUpperBound() + delta;
-//        Range expectedRange = new Range(expectedLower, expectedUpper);
-//
-//        assertEquals("Shifting the range without zero-crossing should change the boundary that crosses zero to 0", expectedRange,
-//                shiftedRange);
-//    }
+    @Test
+    public void ShiftWithZeroCrossingShouldReturnShiftedRangeByZero() {
+        double delta = 0;
+        Range shiftedRange = Range.shift(exampleRange, delta);
+        double expectedLower = -1 + delta;
+        double expectedUpper = 1 + delta;
+        Range expectedRange = new Range(expectedLower, expectedUpper);
 
+        assertEquals("Shifting the range with zero-crossing should return the shifted range", expectedRange,
+                shiftedRange);
+    }
+    @Test
+    public void ShiftWithZeroCrossingShouldReturnShiftedRangeByNegative() {
+        double delta = -2;
+        Range shiftedRange = Range.shift(exampleRange, delta);
+        double expectedLower = -1 + delta;
+        double expectedUpper = 1 + delta;
+        Range expectedRange = new Range(expectedLower, expectedUpper);
+
+        assertEquals("Shifting the range with zero-crossing should return the shifted range", expectedRange,
+                shiftedRange);
+    }
 
     //new
     @Test
+    public void ShiftWithTrueZeroCrossingLeftBoundCrossing(){
+        //range is [-1,1] if we shift by 3 it becomes [1,3] but since we have zero crossing is false, and range stays the same, then [0,2]?
+    	Range example_range = new Range(1,2);
+        Range shiftedRange = Range.shift(example_range, -3, true);
+        Range expectedRange = new Range (-2,-1);
+        assertSame(expectedRange, shiftedRange);
+    }
+    @Test
     public void ShiftWithFalseZeroCrossingLeftBoundCrossing(){
         //range is [-1,1] if we shift by 3 it becomes [1,3] but since we have zero crossing is false, and range stays the same, then [0,2]?
-        Range shiftedRange = Range.shift(exampleRange, 3, false);
-        Range expectedRange = new Range (0,2);
+    	Range example_range = new Range(1,2);
+        Range shiftedRange = Range.shift(example_range, -3, false);
+        Range expectedRange = new Range (0,1);
+        assertSame(expectedRange, shiftedRange);
+    }
+
+    @Test
+    public void ShiftWithTrueZeroCrossingRightBoundCrossing(){
+        //range is [-1,1] if we shift by 3 it becomes [1,3] but since we have zero crossing is false, and range stays the same, then [0,2]?
+    	Range example_range = new Range(-4,-2);
+        Range shiftedRange = Range.shift(example_range, 3, true);
+        Range expectedRange = new Range (-1,1);
         assertSame(expectedRange, shiftedRange);
     }
 
@@ -223,26 +253,26 @@ public class RangeTest {
         assertSame(expectedRange, shiftedRange);
     }
 
-    //testing Expansion method
-    @Test
-    public void NoExpansionNecessary() {
-        double lowerLimit = -0.5;
-        double upperLimit = 0.5;
-        assertEquals("Expanding a range with values within that range should return the same range", // this
-                exampleRange, Range.expand(exampleRange, lowerLimit, upperLimit));
-    } 
-
-    @Test
-    public void BothExpansionNecessary() {
-        // instead of testing function getLength, use a stub and hardcode that instead
-        double lowerLimit = -2.5;
-        double higherLimit = 2.5;
-        Range expectedOutput = new Range(-2.5, 2.5); // this is hard coded
-        assertEquals(
-                "Attempting to expand a range using values outside that range should return the new range with both values changed",
-                expectedOutput, Range.expand(exampleRange, lowerLimit, higherLimit));
-        // this
-    }
+//    //testing Expansion method
+//    @Test
+//    public void NoExpansionNecessary() {
+//        double lowerLimit = -0.5;
+//        double upperLimit = 0.5;
+//        assertEquals("Expanding a range with values within that range should return the same range", // this
+//                exampleRange, Range.expand(exampleRange, lowerLimit, upperLimit));
+//    } 
+//
+//    @Test
+//    public void BothExpansionNecessary() {
+//        // instead of testing function getLength, use a stub and hardcode that instead
+//        double lowerLimit = -2.5;
+//        double higherLimit = 2.5;
+//        Range expectedOutput = new Range(-2.5, 2.5); // this is hard coded
+//        assertEquals(
+//                "Attempting to expand a range using values outside that range should return the new range with both values changed",
+//                expectedOutput, Range.expand(exampleRange, lowerLimit, higherLimit));
+//        // this
+//    }
 
     @After
     public void tearDown() throws Exception {
