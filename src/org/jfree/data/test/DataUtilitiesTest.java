@@ -1,6 +1,7 @@
-package org.jfree.data.test;
+package src.org.jfree.data.test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.security.InvalidParameterException;
 
@@ -15,6 +16,7 @@ import org.junit.*;
 public class DataUtilitiesTest extends DataUtilities {
 
 	private static Values2D values;
+	final double delta = .000000001d;
 
     private Mockery mockingContextKeyedValues;
     private KeyedValues keyedValues;
@@ -46,8 +48,8 @@ public class DataUtilitiesTest extends DataUtilities {
             allowing(values).getValue(1, 1);
             will(returnValue(2.0));
             
-            
-            allowing(values).getValue(0, 2);
+            // test will crash if someone tries get row index 3 or anything thats nto stated here, check for later.
+			allowing(values).getValue(0, 2);
             will(throwException(new InvalidParameterException()));
             allowing(values).getValue(2, 0);
             will(throwException(new InvalidParameterException()));
@@ -56,13 +58,13 @@ public class DataUtilitiesTest extends DataUtilities {
             allowing(values).getValue(-1, 0);
             will(throwException(new InvalidParameterException()));
         }});
-    }
+    }//checked
 
     @Before
     public void setUp() {
         mockingContextKeyedValues = new Mockery();
         keyedValues = mockingContextKeyedValues.mock(KeyedValues.class);
-    }
+    }//checked
 	
 	//-------------------------------------CalculateColumn Tests-------------------------------------------
 	
@@ -75,33 +77,38 @@ public class DataUtilitiesTest extends DataUtilities {
 	     assertEquals(result, 10.0, .000000001d);
 	     
 	     //This class works
-	 }
+	 }//checked
 	 
 	 
 	 
-	 @Test
-	 public void AboveRangeCalculateColumnForTwoValues()
-	 {
-		// setup
+	 @Test(expected = InvalidParameterException.class)
+	public void AboveRangeCalculateColumnForTwoValues() {
+		double y = DataUtilities.calculateColumnTotal(values, 2);
+		 //explanation here: the second someone tries to set y to be something outside the scope of the given matrix, we should have an exception thrown, no need to catch it though
+	}// this is a better way to catch exceptions in testing and is better practice, the other way should work fine so i wont change the rest but just letting u guys know
 
-	     try
-	     {
-	    	 double y = DataUtilities.calculateColumnTotal(values, 2);
-	     }
-	     catch(InvalidParameterException e)
-	     {
-	    	 
-	     }
-	     catch(Exception e)
-	     {
-	    	 fail("Parameter within bounds"+e.getMessage());
-	     }
+//	 public void AboveRangeCalculateColumnForTwoValues()
+//	 {
+//		// setup
+//
+//
+//	    	 double y = DataUtilities.calculateColumnTotal(values, 2);
+//
+//	     catch(InvalidParameterException e)
+//	     {
+//
+//	     }
+//	     catch(Exception e)
+//	     {
+//	    	 fail("Parameter within bounds"+e.getMessage());
+//	     }
 	     //Trying to go out of bounds does not work as expected
 	     
-	 }
+//	 }
 	 
 	 @Test
 	 public void BelowRangeCalculateColumnForTwoValues()
+			 //this tests to see if setting a value to be out of the bounds of a the matrix
 	 {
 		// setup
 
@@ -111,19 +118,19 @@ public class DataUtilitiesTest extends DataUtilities {
 	     }
 	     catch(InvalidParameterException e)
 	     {
-	    	 
+	    	 //this is empty because?
 	     }
 	     catch(Exception e)
 	     {
 	    	 fail("Parameter within bounds"+e.getMessage());
 	     }
 	     //Trying to go out of bounds does not work as expected
-	     
-	 }
+
+	 }//checked
 	 	 
 	 
 	 @Test
-	 public void TestCalculateColumnOnebyOne()
+	 public void TestCalculateColumnOneByOne()
 	 {
 	     Mockery mockingContext = new Mockery();
 	     final Values2D values = mockingContext.mock(Values2D.class);
@@ -137,43 +144,45 @@ public class DataUtilitiesTest extends DataUtilities {
 	         }
 	     });
 	     double result = DataUtilities.calculateColumnTotal(values, 0);
-	     assertEquals(result, 7.5, .000000001d); 
-	     //Returns the only element avaliable as expected
-	 }
+	     assertEquals( 7.5,result, delta);
+	     //Returns the only element available as expected
+	 }//checked
+
+
 	 
 	 @Test
 	 public void TestCalculateColumnEmpty()
 	 {
-	     Mockery mockingContext = new Mockery();
-	     final Values2D values = mockingContext.mock(Values2D.class);
-	     mockingContext.checking(new Expectations() {
-	         {
-	             one(values).getRowCount();
-	             will(returnValue(0));
-	             one(values).getColumnCount();
-	             will(returnValue(0));
-	         }
-	     });
-	     try {
-	    	 double result = DataUtilities.calculateColumnTotal(values, 0);
-	     } catch (Exception e) {return;}
-	     fail();
-	     //Returns the only element avaliable as expected
-	 }	 
+		 Mockery mockingContext = new Mockery();
+		 final Values2D values = mockingContext.mock(Values2D.class);
+		 mockingContext.checking(new Expectations() {
+			 {
+				 one(values).getRowCount();
+				 will(returnValue(0));
+				 one(values).getColumnCount();
+				 will(returnValue(0));
+			 }
+		 });
+		 double result = calculateColumnTotal(values, 0);
+		 assertEquals(0, result, delta);
+	 }	 //checked
 	 
 	 //-------------------------------------CalculateRow Tests-------------------------------------------
 	 
 
 	 @Test
 	 public void CalculateRowTotalForTwoValues()
+			 //one row
 	 {
 		 double result = DataUtilities.calculateRowTotal(values, 0);
-		 assertEquals(result,13.5,.000000001d);
-		 //This function has a bug it just returns 7.5 when it should be returning 17.5
-	 }
+		 assertEquals(13.5,result, delta);
+
+		 //This function has a bug it just returns 7 when it should be returning 13.5
+	 }//checked
 	 
 	 @Test
 	 public void AboveRangeCalculateRowForTwoValues()
+			 //currently matrix has two rows, this checks to see if someone tries to calculate for the 3rd row. (which is row index 2)
 	 {
 		// setup
 
@@ -189,12 +198,13 @@ public class DataUtilitiesTest extends DataUtilities {
 	     {
 	    	 fail("Parameter within bounds"+e.getMessage());
 	     }
-	     //Trying to go out of bounds does not work as expected
+	     //Trying to go out of bounds, exception thrown as expected
 	     
-	 }
+	 }//checked
 	 
 	 @Test
 	 public void BelowRangeCalculateRowForTwoValues()
+	// same thing as previous test but now checking for row index "-1"
 	 {
 		// setup
 
@@ -210,9 +220,8 @@ public class DataUtilitiesTest extends DataUtilities {
 	     {
 	    	 fail("Parameter within bounds"+e.getMessage());
 	     }
-	     //Trying to go out of bounds does not work as expected
-	     
-	 }
+		 //Trying to go out of bounds, exception thrown as expected
+	 }//checked
 	 	 
 	 
 	 @Test
@@ -226,18 +235,16 @@ public class DataUtilitiesTest extends DataUtilities {
 	             will(returnValue(1));
 	             one(values).getValue(0, 0);
 	             will(returnValue(7.5));
-	             
-	             
-	         }
+			 }
 	     });	 
 		 double result = DataUtilities.calculateRowTotal(values, 0);
-		 assertEquals(result,7.5,.000000001d);
+		 assertEquals(7.5, result, delta);
 		 	 
-	 }
+	 }//checked
 	 @Test
-	 public void TestCalculateRowEmpty()
-	 {
-	     Mockery mockingContext = new Mockery();
+	 public void TestCalculateRowEmpty(){
+		// this is when martix, code not written by us should check to call calculateRowTotal, if its empty (THIS CHECK IS NOT DONE BY US) then it should return 0
+		 Mockery mockingContext = new Mockery();
 	     final Values2D values = mockingContext.mock(Values2D.class);
 	     mockingContext.checking(new Expectations() {
 	         {
@@ -247,40 +254,64 @@ public class DataUtilitiesTest extends DataUtilities {
 	             will(returnValue(0));
 	         }
 	     });
-	     try {
-	    	 double result = DataUtilities.calculateRowTotal(values, 0);
-	     } catch (Exception e) {return;}
-	     fail();
-	     //Returns the only element avaliable as expected
-	 }	 
-	 
-	 //------------------------------------------------CreateNumber Array Test---------------------------------------------
-	 
-	 
-	 @Test
-	 public void CreateValidArray()
+		 double result = calculateRowTotal(values, 0);
+		 assertEquals(0, result, delta);
+	 }//checked
+//	 public void TestCalculateRowEmpty()
+//	 {
+//	     Mockery mockingContext = new Mockery();
+//	     final Values2D values = mockingContext.mock(Values2D.class);
+//	     mockingContext.checking(new Expectations() {
+//	         {
+//	             one(values).getRowCount();
+//	             will(returnValue(0));
+//	             one(values).getColumnCount();
+//	             will(returnValue(0));
+//	         }
+//	     });
+//	     assertEquals(0, result, delta);
+//	     //Returns the only element available as expected, this is "if no matrix exists we throw and exception)
+//	 }
+
+	@Test
+		 public void CreateValidArray()
 	 {
-		 double [] valid = {1.0,-2.1,3.2,4.3,5.4,6.5,7.6,8.7,9.8};		 
+		 double [] valid = {1.0,-2.1,3.2,4.3,5.4,6.5,7.6,8.7,9.8};
 		 Number [] test  = DataUtilities.createNumberArray(valid);
-		 
-		 assertEquals(valid.length,test.length); //Make sure it has the same number of elements
-		 
-		 for(int i =0;i<valid.length;i++)
-		 {
-//			 System.out.println(test[i]); 
-			 assertEquals(valid[i],test[i]);
+
+		 if (valid.length == test.length){
+			 for(int i =0;i<valid.length;i++)
+			 {
+//			 System.out.println(test[i]);
+				 assertEquals(valid[i],test[i]);
+			 }
 		 }
-	 }
-	 
-	 //Helps us observe the behaviour of how this method works
-	 @Test
-	 public void CreateZeroArray()
-	 {
-		 double [] zeroArray = {};
-		 Number [] test = DataUtilities.createNumberArray(zeroArray);
-		 
-		 assertEquals(0, test.length); 
-	 }
+		 else{
+			 fail();
+		 }
+		 assertEquals(valid.length,test.length); //Make sure it has the same number of elements
+	 }//check
+@Test(expected = InvalidParameterException.class)
+	public void CreateInvalidArray(){
+		double [] nullArray = null;
+		Number [] actualOutput = createNumberArray(nullArray);
+
+		assertSame(null, actualOutput);
+
+}//for later
+
+		//Helps us observe the behaviour of how this method works
+	@Test()
+	public void CreateZeroArray()
+	{
+		double [] zeroArray = {};
+		Number [] test = DataUtilities.createNumberArray(zeroArray);
+
+		assertEquals(0, test.length);
+	}//checked
+
+	 //------------------------------------------------CreateNumber Array Test---------------------------------------------
+
 
 	 //----------------------------------------------createNumber2D Array test---------------------------------------------------
 	 
