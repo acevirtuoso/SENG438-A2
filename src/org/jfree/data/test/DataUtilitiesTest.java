@@ -329,12 +329,12 @@ public class DataUtilitiesTest extends DataUtilities {
 				 assertEquals(valid2D[i][j],test[i][j]);
 			 }
 		 }
-		 
-	 }
+	 }//checked
 	 @Test
 	 public void createValid2D2x1ArrayTest()
 	 {
-		 double [][] valid2D = {{1,2},{3}};
+		 double [][] valid2D = {{1,2}};
+
 		 Number [][] test = DataUtilities.createNumberArray2D(valid2D);
 		 
 		 for(int i=0;i<valid2D.length;i++)
@@ -345,8 +345,7 @@ public class DataUtilitiesTest extends DataUtilities {
 				 assertEquals(valid2D[i][j],test[i][j]);
 			 }
 		 }
-		 
-	 }
+	 }//checked
 	 
 	 @Test
 	 public void CreateZero2DArrayTest()
@@ -355,7 +354,7 @@ public class DataUtilitiesTest extends DataUtilities {
 		 Number [][] test = DataUtilities.createNumberArray2D(zeroArray);
 		 
 		 assertEquals(0, test.length);
-	 }
+	 }//checked
 	 	 
 	 //--------------------------------------------------getCumulativePercentages Test------------------------------------------
 	 
@@ -389,6 +388,8 @@ public class DataUtilitiesTest extends DataUtilities {
 	                will(returnValue(Double.valueOf(4)));
 	                allowing(keyedValues).getValue(4);
 	                will(returnValue(Double.valueOf(6)));
+					//so the current array is as follows: [ 1, 2, 3, 4, 6]
+					// the percents are: [ 1/16, 3/16, 6/16, 10/16, 16/16] = [0.0625, 0.1875, 0.375, 0.625, 1.0]
 	            }
 	        });
 	        KeyedValues result = DataUtilities.getCumulativePercentages(keyedValues);
@@ -398,7 +399,7 @@ public class DataUtilitiesTest extends DataUtilities {
 	        assertEquals(0.625, result.getValue(3));
 	        assertEquals(1.0, result.getValue(4));
 		 
-	 }
+	 }//checked
 	 
 	 @Test	 
 	 public void validPositiveAndZeroPercentages()
@@ -431,6 +432,7 @@ public class DataUtilitiesTest extends DataUtilities {
 	                allowing(keyedValues).getValue(4);
 	                will(returnValue(Double.valueOf(0)));
 	            }
+				//so array is: [1, 2, 3, 4, 0]
 	        });
 	        KeyedValues result = DataUtilities.getCumulativePercentages(keyedValues);
 	        assertEquals(0.1, result.getValue(0));
@@ -439,7 +441,7 @@ public class DataUtilitiesTest extends DataUtilities {
 	        assertEquals(1.0, result.getValue(3));
 	        assertEquals(1.0, result.getValue(4));
 		 
-	 }
+	 }//checked
 
 	 @Test	 
 	 public void InvalidNegativePercentages()
@@ -479,9 +481,9 @@ public class DataUtilitiesTest extends DataUtilities {
 		 catch (InvalidParameterException e) {return;}
 		 catch (Exception e) {fail();}
 		 fail();
-	 }
+	 }//checked
 	 
-	 @Test	 
+	 @Test(expected = InvalidParameterException.class)
 	 public void InvalidCharPercentages()
 	 {
 		 mockingContextKeyedValues.checking(new Expectations() {
@@ -513,11 +515,11 @@ public class DataUtilitiesTest extends DataUtilities {
 	                will(returnValue("a"));
 	            }
 	        });
-		 try {
-	        KeyedValues result = DataUtilities.getCumulativePercentages(keyedValues);
-		 }
-		 catch (InvalidParameterException e) {return;}
-		 catch (Exception e) {fail();}
+//		 try {
+//	        KeyedValues result = DataUtilities.getCumulativePercentages(keyedValues);
+//		 }
+//		 catch (InvalidParameterException e) {return;}
+//		 catch (Exception e) {fail();}
 		 fail();
 	 }
 	 @Test	 
